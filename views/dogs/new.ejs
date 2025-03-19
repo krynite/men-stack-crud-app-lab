@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Add New Dog!</title>
 </head>
 <body>
+    <h1>Create a new dog below:</h1>
+    <form action="/dogs" method="POST">
+        <label for="name">Name of Dog:</label>
+        <input type="text" name="name" id="name" />
+
+        <label for="breed">Breed of Dog:</label>
+        <input type="text" name="breed" id="breed" />
+
+        <button type="submit">Add Dog to list</button>
+    </form>
+    <a href="/dogs">Browse Dogs</a>
+    <a href="/">Dogs Homepage</a>
     
 </body>
 </html>

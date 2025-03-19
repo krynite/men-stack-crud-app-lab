@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog's Homepage</title>
 </head>
+
 <body>
     <h1>All Dogs in Pens</h1>
-    <a href="/show"/a>
-    
+    <ul>
+        <% dogs.forEach(dog=> { %>
+            <li>
+                <a href="/dogs/<%= dog.name %>"><%= dog.breed %></a>
+            </li>
+            <% }); %>
+    </ul>
+    <a href="/dogs/new">Add new Dog here</a><br>
+    <a href="/">Back to Dog's Homepage</a>
+
 </body>
+
 </html>

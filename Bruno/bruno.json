@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "mens-cruds-lab",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

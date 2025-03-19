@@ -1,51 +1,80 @@
-// imports
-
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
 const morgan = require("morgan");
 const prompt = require("prompt-sync")();
 const Dog = require("./models/Dog");
+const methodOverride = require("method-override");
 
-//configs
-mongoose.set("debug", true)
-// app.use(morgan("dev"))
+// Initialize Express app
+const app = express();
+const port = 3000;
 
+// Middleware
+app.use(morgan("dev"));
+app.use(methodOverride("_method"));
+app.use(express.urlencoded({ extended: false }));
+app.set("view engine", "ejs");
+
+// MongoDB connection
+mongoose.set("debug", true);
 
 const connect = async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log("Connected to MongoDB");
-  await runQueries();
-
-  await mongoose.disconnect();
-  console.log("Disconnected from MongoDB");
-  process.exit();
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected to MongoDB");
+    return true;
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    return false;
+  }
 };
-connect();
 
-//Query Functions
+// adding dog with prompt
+const createDog = async () => {
+  const newName = prompt(`Type new dog's name here: `);
+  const newBreed = prompt(`Type dog's breed here: `);
 
-const createDog = async() => {
-    const newName = prompt(`Type new dogs name here: `)
-    const newBreed = prompt(`Type dogs breed here: `)
+  const dogData = {
+    name: newName,
+    breed: newBreed,
+  };
 
-    const dogData = {
-        name: newName,
-        breed: newBreed,
-    }
+  try {
+    const newDog = await Dog.create(dogData);
+    console.log(`Dog created! Name: ${newName}, Breed: ${newBreed}`);
+    return newDog;
+  } catch (err) {
+    console.error("Error creating dog:", err);
+    return null;
+  }
+};
 
-    const newDog = await Dog.create(dogData)
-    console.log(`Dog's name: ${newName}, Breed: ${newBreed}`)
-}
+// Routes
 
+// Main homepage
+app.get("/", async (req, res) => {
+  res.render("index");
+});
 
+app.get("/dogs", async (req, res) => {
+  try {
+    const allDogs = await Dog.find();
+    res.render("dogs/index", { dogs: allDogs });
+  } catch (err) {
+    console.error("Error fetching dogs:", err);
+    res.status(500).send("Server error");
+  }
+});
 
+// Start server
+const startServer = async () => {
+  const connected = await connect();
+  if (connected) {
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  }
+};
 
-// Run Queries
-const runQueries = async () => {
-    console.log("running queries func")
-    await createDog();
-
-
-
-}
+startServer();
