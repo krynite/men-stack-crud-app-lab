@@ -50,9 +50,6 @@ const createDog = async () => {
   }
 };
 
-// Routes
-
-// Main homepage
 app.get("/", async (req, res) => {
   res.render("index");
 });
@@ -71,6 +68,16 @@ app.get("/dogs/new", (req, res) => {
   res.render("dogs/new");
 });
 
+app.post("/dogs", async (req, res) => {
+  try {
+    await Dog.create(req.body);
+    res.redirect("/dogs");
+  } catch (err) {
+    console.error("Error creating dog:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 app.get("/dogs/:id", async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id);
@@ -83,18 +90,51 @@ app.get("/dogs/:id", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-app.post("/dogs", async (req, res) => {
+app.get("/dogs/:id/edit", async (req, res) => {
   try {
-    await Dog.create(req.body);
-    res.redirect("/dogs");
+    const dog = await Dog.findById(req.params.id);
+    if (!dog) {
+      return res.status(404).send("Dog not found");
+    }
+    res.render("dogs/editDog", { dog });
   } catch (err) {
-    console.error("Error creating dog:", err);
+    console.error("Error fetching dog for edit:", err);
     res.status(500).send("Server error");
   }
 });
 
-// Start server
+app.put("/dogs/:id", async (req, res) => {
+  try {
+    const updatedDog = await Dog.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true } // returns updated data
+    );
+
+    if (!updatedDog) {
+      return res.status(404).send("Dog not found");
+    }
+    res.redirect(`/dogs/${updatedDog._id}`);
+  } catch (err) {
+    console.error("Error updating dog:", err);
+    res.status(500).send("Server error");
+  }
+});
+
+app.delete("/dogs/:id", async (req, res) => {
+  try {
+    const deletedDog = await Dog.findByIdAndDelete(req.params.id);
+
+    if (!deletedDog) {
+      return res.status(404).send("Dog not found");
+    }
+    res.redirect("/dogs");
+  } catch (err) {
+    console.error("Error deleting dog:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 const startServer = async () => {
   const connected = await connect();
   if (connected) {
