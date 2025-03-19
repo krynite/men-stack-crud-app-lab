@@ -67,6 +67,33 @@ app.get("/dogs", async (req, res) => {
   }
 });
 
+app.get("/dogs/new", (req, res) => {
+  res.render("dogs/new");
+});
+
+app.get("/dogs/:id", async (req, res) => {
+  try {
+    const dog = await Dog.findById(req.params.id);
+    if (!dog) {
+      return res.status(404).send("Dog not found");
+    }
+    res.render("dogs/show", { dog });
+  } catch (err) {
+    console.error("Error fetching dog:", err);
+    res.status(500).send("Server error");
+  }
+});
+
+app.post("/dogs", async (req, res) => {
+  try {
+    await Dog.create(req.body);
+    res.redirect("/dogs");
+  } catch (err) {
+    console.error("Error creating dog:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 // Start server
 const startServer = async () => {
   const connected = await connect();

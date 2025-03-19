@@ -12,7 +12,7 @@
     <ul>
         <% dogs.forEach(dog=> { %>
             <li>
-                <a href="/dogs/<%= dog.name %>"><%= dog.breed %></a>
+                <a href="/dogs/<%= dog._id %>"><%= dog.name %></a>
             </li>
             <% }); %>
     </ul>

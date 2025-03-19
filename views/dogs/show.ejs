@@ -6,6 +6,17 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <h1><%= dog.name%>'s Details</h1>
+
+    <div class="dog-info">
+        <h2><%= dog.name %> Info</h2>
+        <p><strong>Name: </strong><%= dog.name %></p>
+        <p><strong>Breed: </strong><%= dog.breed %></p>
+    </div>
+
+    <div class="nav-links">
+        <a href="/dogs">Back to All Dogs</a>
+        <a href="/">Back to Homepage</a>
+    </div>
 </body>
 </html>
